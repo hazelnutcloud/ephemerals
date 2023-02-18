@@ -1,10 +1,12 @@
 import {
   ContractSource,
   Ephemeral,
+  EventName,
   EVMBlockSource,
   EVMContractCallSource,
   EVMEventLogSource,
   Stack,
+  Topic,
 } from "../../mod.ts";
 
 export default function stacker(stack: Stack) {
@@ -15,8 +17,12 @@ export default function stacker(stack: Stack) {
     },
   );
 
-  const eventSource = new EVMEventLogSource("Transfer", {
+  const eventSource = new EVMEventLogSource("Transfer" as EventName, {
     contractSources: [usdc],
+  });
+
+  const topicSource = new EVMEventLogSource("0x12345678" as Topic, {
+    chains: ["ethereum"],
   });
 
   const callSource = new EVMContractCallSource("transfer", {
@@ -32,6 +38,11 @@ export default function stacker(stack: Stack) {
     new Ephemeral({
       name: "transferEventEphemeral",
       source: eventSource,
+      ephemeral: (context) => {},
+    }),
+    new Ephemeral({
+      name: "topicEphemeral",
+      source: topicSource,
       ephemeral: (context) => {},
     }),
     new Ephemeral({

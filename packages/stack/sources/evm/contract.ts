@@ -7,12 +7,12 @@ export interface ContractSource {
   abi?: ethers.InterfaceAbi;
 }
 
-export class ContractSource {
+export class ContractSource<TAnonymous extends boolean = false> {
   constructor(
     params: {
       address: string;
       chains: [SupportedChains, ...SupportedChains[]];
-      abi?: ethers.InterfaceAbi;
+      abi?: TAnonymous extends true ? never : ethers.InterfaceAbi;
     },
   ) {
     const { address, chains, abi } = params;

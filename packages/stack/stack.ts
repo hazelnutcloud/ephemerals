@@ -1,11 +1,12 @@
-import { Ephemeral, Source } from "./mod.ts";
+import { Ephemeral, EventName, Source, Topic } from "./mod.ts";
 
-type Distribute<T extends Source> = T extends unknown ? Ephemeral<T> : never;
+type Distribute<T extends Source, U extends Topic | EventName> = T extends
+  unknown ? Ephemeral<T, U> : never;
 export class Stack {
-  private readonly _ephemerals: Distribute<Source>[] = [];
+  private readonly _ephemerals: Distribute<Source, Topic | EventName>[] = [];
 
   ephemerals(
-    ephemerals: Distribute<Source>[],
+    ephemerals: Distribute<Source, Topic | EventName>[],
   ) {
     this._ephemerals.push(
       ...ephemerals,
