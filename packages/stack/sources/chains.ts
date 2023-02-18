@@ -1,7 +1,7 @@
 export const supportedChains = {
   evm: [
     { id: "ethereum", scanner: new URL("https://etherscan.io") },
-    { id: "avalanche", scanner: new URL("https://snowtrace.io") },
+    { id: "arbitrum", scanner: new URL("https://arbiscan.io/") },
   ],
 } as const;
 

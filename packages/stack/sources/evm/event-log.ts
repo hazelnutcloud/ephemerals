@@ -1,7 +1,7 @@
 import { ethers } from "../../deps.ts";
-import { type SupportedChains } from "../chains.ts";
+import { type SupportedChains, supportedChains } from "../chains.ts";
 import { fetchAbi } from "../abi.ts";
-import { Source } from "../interfaces.ts";
+import { ContractSource } from "./mod.ts";
 
 export interface EVMEventLogSource {
   name: string;
@@ -9,43 +9,34 @@ export interface EVMEventLogSource {
   chainsToAddresses?: Map<SupportedChains, string[]>;
 }
 
-interface ArrayAtLeastOne<T> extends Array<T> {
-  0: T;
-}
-
-type ContractSource = {
-  address: string;
-  chains: ArrayAtLeastOne<SupportedChains>;
-  startBlock?: number;
-};
-
 type EVMEventLogSourceOptions =
-  | {
-    abi: ethers.InterfaceAbi;
-    chains: ArrayAtLeastOne<SupportedChains>;
-    contracts?: never;
-  }
-  | {
-    abi: ethers.InterfaceAbi;
-    chains?: never;
-    contracts: ArrayAtLeastOne<ContractSource>;
-  }
-  | {
-    abi?: ethers.InterfaceAbi;
-    chains?: never;
-    contracts: ArrayAtLeastOne<ContractSource>;
-  } & {
+  & (
+    | {
+      abi: ethers.InterfaceAbi;
+      chains: [SupportedChains, ...SupportedChains[]];
+      contractSources?: never;
+    }
+    | {
+      abi?: never;
+      chains?: never;
+      contractSources: [ContractSource, ...ContractSource[]];
+    }
+  )
+  & {
     filters?: (string | string[])[];
   };
 
-export class EVMEventLogSource implements Source {
-  constructor(name: string, options: EVMEventLogSourceOptions) {
+export class EVMEventLogSource {
+  constructor(
+    name: string,
+    options: EVMEventLogSourceOptions,
+  ) {
     this.name = name;
 
-    const { abi, contracts, chains } = options;
+    const { abi, contractSources, chains } = options;
 
     if (!abi) {
-      if (!contracts) {
+      if (!contractSources) {
         throw new Error(
           "EVMEventLogSource requires an ABI or at least one contract address",
         );
@@ -54,14 +45,14 @@ export class EVMEventLogSource implements Source {
       this.abi = abi;
     }
 
-    if (contracts && chains) {
+    if (contractSources && chains) {
       throw new Error(
-        "EVMEventLogSource cannot be constructed with both contracts and chains",
+        "EVMEventLogSource cannot be constructed with both contractSources and chains",
       );
     }
 
-    if (contracts) {
-      for (const { address, chains } of contracts) {
+    if (contractSources) {
+      for (const { address, chains } of contractSources) {
         this.fromContract(address, chains);
       }
     } else if (chains) {
@@ -90,7 +81,7 @@ export class EVMEventLogSource implements Source {
     }
 
     if (!chains) {
-      chains = ["ethereum", "avalanche"];
+      chains = supportedChains.evm.map((chain) => chain.id);
     }
 
     for (const chain of chains) {
