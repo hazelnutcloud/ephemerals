@@ -1,18 +1,15 @@
 import { getPocketBaseClient } from "../utils.ts";
 import { login } from "../login/mod.ts";
-import {
-  ClientResponseError,
-  PocketBase,
-  RecordListQueryParams,
-  Spinner,
-} from "../../deps.ts";
-import { getEphemeralSourceType, parseStack } from "./stack-parser.ts";
+import { ClientResponseError } from "@shared-deps";
+import { Spinner } from "../../deps.ts";
+import { parseStack } from "./stack-parser.ts";
 import {
   EVMBlockSource,
   EVMContractCallSource,
   EVMEventLogSource,
   fetchAbi,
 } from "@stack";
+import { collectionIterator } from "@shared";
 import { ethers } from "@shared-deps";
 
 interface Stage {
@@ -85,17 +82,17 @@ export const upload = async (
   // create new ephemerals for this stage
   const stack = await parseStack(directory);
   for (const ephemeral of stack.getEphemerals()) {
-    const sourceType = getEphemeralSourceType(ephemeral);
-
     spinner.text = `Creating ephemeral ${ephemeral.name}...`;
+    const { type } = ephemeral.source;
+
     const ephemeralRecord = await pb.collection("ephemerals").create({
       name: ephemeral.name,
       stage: stageRecord!.id,
-      source_type: sourceType,
+      source_type: [type],
     });
 
     // create ephemeral source
-    switch (sourceType) {
+    switch (type) {
       case "evm_event_log": {
         let { name, abi, chains, filters, addresses } = ephemeral
           .source as EVMEventLogSource;
@@ -189,29 +186,3 @@ export const upload = async (
     }
   }
 };
-
-async function* collectionIterator(
-  pb: PocketBase,
-  collectionIdOrName: string,
-  perPage: number,
-  queryParams?: RecordListQueryParams,
-) {
-  let page = 1;
-  let hasMore = true;
-  while (hasMore) {
-    try {
-      const res = await pb.collection(collectionIdOrName).getList(
-        page,
-        perPage,
-        queryParams,
-      );
-      for (const item of res.items) {
-        yield item;
-      }
-      hasMore = res.items.length > 0;
-      page++;
-    } catch (error) {
-      throw error;
-    }
-  }
-}

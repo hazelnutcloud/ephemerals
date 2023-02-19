@@ -134,7 +134,18 @@
     "https://esm.sh/v103/zod@3.20.2/lib/index.d.ts": "0f86f053aecd06054359e146b6cd800fee9bf82905f8afb47f1fe774fd37311e",
     "https://esm.sh/v103/zod@3.20.2/lib/locales/en.d.ts": "f8ec1611afb8d132c6c71822718805866890cf2071025153af97508eff24e4b6",
     "https://esm.sh/v103/zod@3.20.2/lib/types.d.ts": "744e3c65de31c5f7f8e79f9a37e1e372c9043a5ca130ec1038180ba4c9941f1f",
-    "https://esm.sh/zod@3.20.2": "23fc535ce0d7972236f916313671dcb3d73a4f8b3211e81c0c3e4b000f181565"
+    "https://esm.sh/zod@3.20.2": "23fc535ce0d7972236f916313671dcb3d73a4f8b3211e81c0c3e4b000f181565",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/mod.ts": "91093aba2c515d879d86aa0af20f0e47e030c7589993f13334b02b0b0978b26c",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/ephemeral.ts": "bf5daabc4484d5da1e79aee3af486d812e0bde062c040571e64d2a91a0b98564",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/mod.ts": "bda033b2409250724341ea75eec5b83cfed003108959aaf5d3f4600d8dc7fc52",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/abi.ts": "60c19e2f4bdcb4a626d95f390cc2dfc02357d0d2ac5564dc323261723e61bd32",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/chains.ts": "d817f86e5b1fce011aae5ebcc0f0965839b9338728225149d13c10d8dd4fc650",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/evm/block.ts": "68c799432c39d6bf35af82b49a907b4cc025bde9807fed7f7671ada31a678d73",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/evm/contract-call.ts": "5d73ae7c12d6be1e1ecca3fbd9089a0422077769f9fb7138fcfc3b68e004fa2a",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/evm/event-log.ts": "0751e61fd7a270135825030e7743fd02f7f4d2ecbf9913e36ad6cbfb3bf71c40",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/evm/mod.ts": "8f2bd9acb02e726b3c6201ea03109fa18d34f011ef263dbf1ecb405dd70b27be",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/sources/mod.ts": "0d2d132f767dda96e7187e63a04a12709bcec9f7c9466bd1a9ebfedeb6338a9f",
+    "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/packages/stack/stack.ts": "a5cb9712a994c6bf3d88c20a92a8dc0d2c2635cd6fbb5402e07c1650460b046a"
   },
   "npm": {
     "specifiers": {

@@ -1,5 +1,6 @@
 import { ethers } from "@shared-deps";
 import { SupportedChains } from "../chains.ts";
+import { EVMBaseSource } from "./base.ts";
 
 export interface EVMContractCallSource {
   name: string;
@@ -9,7 +10,7 @@ export interface EVMContractCallSource {
   abi?: ethers.InterfaceAbi;
 }
 
-export class EVMContractCallSource {
+export class EVMContractCallSource extends EVMBaseSource {
   constructor(
     name: string,
     options: {
@@ -19,6 +20,8 @@ export class EVMContractCallSource {
       abi?: ethers.InterfaceAbi;
     },
   ) {
+    super("evm_contract_call");
+
     const { addresses, chains, senders, abi } = options;
     this.name = name;
     this.addresses = addresses;

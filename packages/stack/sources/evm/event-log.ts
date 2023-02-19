@@ -1,5 +1,6 @@
 import { ethers } from "@shared-deps";
 import { type SupportedChains } from "../chains.ts";
+import { EVMBaseSource } from "./base.ts";
 
 export interface EVMEventLogSource {
   name: string;
@@ -16,11 +17,13 @@ type EVMEventLogSourceOptions = {
   filters?: (string | string[])[];
 };
 
-export class EVMEventLogSource {
+export class EVMEventLogSource extends EVMBaseSource {
   constructor(
     name: string,
     options: EVMEventLogSourceOptions,
   ) {
+    super("evm_event_log");
+
     const { filters, chains, addresses, abi } = options;
     this.name = name;
     this.filters = filters;

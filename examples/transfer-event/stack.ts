@@ -4,7 +4,7 @@ import {
   EVMContractCallSource,
   EVMEventLogSource,
   Stack,
-} from "../../mod.ts";
+} from "https://raw.githubusercontent.com/hazelnutcloud/ephemerals/main/mod.ts";
 
 export default function stacker(stack: Stack) {
   const eventSource = new EVMEventLogSource("Transfer", {

@@ -1,3 +1,4 @@
+import "https://deno.land/std@0.177.0/dotenv/load.ts";
 import {
   Command,
   deploy,
@@ -6,7 +7,6 @@ import {
   remove,
   signup,
 } from "./packages/cli/mod.ts";
-import "https://deno.land/std@0.177.0/dotenv/load.ts";
 
 if (import.meta.main) {
   const command = new Command()

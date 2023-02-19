@@ -1,5 +1,6 @@
 import { POCKETBASE_URL } from "../constants.ts";
-import { Input, PocketBase, Secret, z } from "../deps.ts";
+import { Input, Secret, z } from "../deps.ts";
+import { PocketBase } from "@shared-deps";
 
 export const getEmail = async () => {
   const email = await Input.prompt("✉️  Email:");
