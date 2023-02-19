@@ -1,43 +1,31 @@
-import { ethers } from "../../deps.ts";
+import { ethers } from "@shared-deps";
 import { type SupportedChains } from "../chains.ts";
-import { ContractSource } from "./mod.ts";
 
-export interface EVMEventLogSource<T extends Topic | EventName> {
-  nameOrTopic: string;
-  chains?: [SupportedChains, ...SupportedChains[]];
-  contractSources?: [ContractSource, ...ContractSource[]];
+export interface EVMEventLogSource {
+  name: string;
+  chains: [SupportedChains, ...SupportedChains[]];
+  addresses?: string[];
+  abi?: ethers.InterfaceAbi;
+  filters?: (string | string[])[];
 }
 
-type Brand<K, T> = K & { __brand: T };
-export type Topic = Brand<string, "Topic">;
-export type EventName = Brand<string, "EventName">;
+type EVMEventLogSourceOptions = {
+  addresses?: string[];
+  chains: [SupportedChains, ...SupportedChains[]];
+  abi?: ethers.InterfaceAbi;
+  filters?: (string | string[])[];
+};
 
-type EVMEventLogSourceOptions<T extends Topic | EventName> =
-  & (T extends Topic ? ({
-      chains: [SupportedChains, ...SupportedChains[]];
-      contractSources?: never;
-    } | {
-      contractSources: [ContractSource<true>, ...ContractSource<true>[]];
-      chains?: never;
-    })
-    : ({
-      contractSources: [ContractSource, ...ContractSource[]];
-      chains?: never;
-      abi?: never;
-    } | {
-      contractSources?: never;
-      chains: [SupportedChains, ...SupportedChains[]];
-      abi: ethers.InterfaceAbi;
-    }))
-  & {
-    filters?: (string | string[])[];
-  };
-
-export class EVMEventLogSource<T extends Topic | EventName> {
+export class EVMEventLogSource {
   constructor(
-    identifier: T,
-    options: EVMEventLogSourceOptions<T>,
+    name: string,
+    options: EVMEventLogSourceOptions,
   ) {
-    const { filters } = options;
+    const { filters, chains, addresses, abi } = options;
+    this.name = name;
+    this.filters = filters;
+    this.chains = chains;
+    this.addresses = addresses;
+    this.abi = abi;
   }
 }

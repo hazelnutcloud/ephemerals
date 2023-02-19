@@ -1,2 +1,4 @@
 pocketbase/pb_data
 pocketbase/pocketbase
+.env
+scratchpad.ts

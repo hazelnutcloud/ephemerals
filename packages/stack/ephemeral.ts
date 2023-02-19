@@ -1,32 +1,27 @@
-import { ethers } from "./deps.ts";
+import { ethers } from "@shared-deps";
 import {
-  EventName,
   EVMBlockSource,
   EVMContractCallSource,
   EVMEventLogSource,
   Source,
-  Topic,
 } from "./mod.ts";
 
-export interface Ephemeral<T extends Source, U extends EventName | Topic> {
-  source: T extends EVMEventLogSource<U> ? EVMEventLogSource<U> : T;
+export interface Ephemeral<T extends Source> {
+  source: T;
   ephemeral: T extends EVMContractCallSource
     ? (context: { args: ethers.TransactionReceipt }) => void | Promise<void>
     : T extends EVMBlockSource
       ? (context: { block: ethers.Block }) => void | Promise<void>
-    : T extends EVMEventLogSource<U>
-      ? U extends EventName
-        ? (context: { event: ethers.EventLog }) => void | Promise<void>
-      : U extends Topic ? (context: { log: ethers.Log }) => void | Promise<void>
-      : never
+    : T extends EVMEventLogSource
+      ? (context: { event: ethers.EventLog }) => void | Promise<void>
     : never;
   name: string;
   await?: boolean;
 }
 
-export class Ephemeral<T extends Source, U extends EventName | Topic> {
+export class Ephemeral<T extends Source> {
   constructor(
-    params: Ephemeral<T, U>,
+    params: Ephemeral<T>,
   ) {
     const { source, ephemeral, name, await: await_ } = params;
     this.source = source;

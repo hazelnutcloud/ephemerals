@@ -1,12 +1,14 @@
+import { SupportedChains } from "../chains.ts";
+
 export interface EVMBlockSource {
-  chain: string;
+  chain: SupportedChains;
   interval: number;
 }
 
 export class EVMBlockSource {
   constructor(
     params: {
-      chain: string;
+      chain: SupportedChains;
       interval: number;
     },
   ) {
