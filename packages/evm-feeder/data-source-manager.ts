@@ -1,17 +1,17 @@
 import { POCKETBASE_URL } from "../cli/constants.ts";
 import { PocketBase, Record } from "@shared-deps";
 import {
-  EVMBlockSource,
-  EVMContractCallSource,
-  EVMEventLogSource,
-} from "@stack";
-import { collectionIterator } from "../shared/collection-iterator.ts";
+  EVMBlockSourceParsed,
+  EVMContractCallSourceParsed,
+  EVMEventLogSourceParsed,
+} from "./source-types.ts";
+import { SupportedChains } from "../stack/sources/chains.ts";
 
 export class DataSourceManager {
   pb: PocketBase;
-  eventLogSources: EVMEventLogSource[] = [];
-  contractCallSources: EVMContractCallSource[] = [];
-  blockSources: EVMBlockSource[] = [];
+  eventLogSources: EVMEventLogSourceParsed[] = [];
+  contractCallSources: EVMContractCallSourceParsed[] = [];
+  blockSources: EVMBlockSourceParsed[] = [];
 
   constructor() {
     this.pb = new PocketBase(POCKETBASE_URL);
@@ -28,48 +28,78 @@ export class DataSourceManager {
     await this.pb.admins.authWithPassword(adminEmail, adminPassword);
   }
 
-  async getDataSources() {
+  async getDependencies() {
     await Promise.all([
       this.getEventLogSources(),
+      this.getContractCallSources(),
+      this.getBlockSources(),
     ]);
-    console.log(
-      this.eventLogSources,
-      this.contractCallSources,
-      this.blockSources,
+
+    const eventLogDependencies = this.eventLogSources.reduce((acc, source) => {
+      const { topic0, chains } = source;
+      if (topic0) {
+        // NOTE: Need to update this once more chains are supported
+        const counts = acc.get(chains) || new Map<string, number>();
+        const count = counts.get(topic0) || 0;
+        counts.set(topic0, count + 1);
+
+        acc.set(chains, counts);
+      }
+      return acc;
+    }, new Map<SupportedChains, Map<string, number>>());
+
+    const contractCallDependencies = this.contractCallSources.reduce(
+      (acc, source) => {
+        const { selector, chains } = source;
+        // NOTE: Need to update this once more chains are supported
+        const counts = acc.get(chains) || new Map<string, number>();
+        const count = counts.get(selector) || 0;
+        counts.set(selector, count + 1);
+        acc.set(chains, counts);
+
+        return acc;
+      },
+      new Map<SupportedChains, Map<string, number>>(),
     );
+
+    const blockDependencies = this.blockSources.reduce((acc, source) => {
+      const { chain } = source;
+      const count = acc.get(chain) || 0;
+      acc.set(chain, count + 1);
+      return acc;
+    }, new Map<SupportedChains, number>());
+
+    return {
+      eventLogDependencies,
+      contractCallDependencies,
+      blockDependencies,
+    };
   }
 
   async getEventLogSources() {
-    for await (
-      const dataSource of collectionIterator<EVMEventLogSource & Record>(
-        this.pb,
-        "evm_event_log_sources",
-        100,
-      )
+    const eventLogSources = await this.pb.collection("evm_event_log_sources")
+      .getFullList<EVMEventLogSourceParsed & Record>(200);
+    for (
+      const dataSource of eventLogSources
     ) {
       this.eventLogSources.push(dataSource);
     }
   }
 
   async getContractCallSources() {
-    for await (
-      const dataSource of collectionIterator<EVMContractCallSource & Record>(
-        this.pb,
-        "evm_contract_call_sources",
-        100,
-      )
-    ) {
+    const contractCallSources = await this.pb.collection(
+      "evm_contract_call_sources",
+    ).getFullList<EVMContractCallSourceParsed & Record>(200);
+    for (const dataSource of contractCallSources) {
       this.contractCallSources.push(dataSource);
     }
   }
 
   async getBlockSources() {
-    for await (
-      const dataSource of collectionIterator<EVMBlockSource & Record>(
-        this.pb,
-        "evm_block_sources",
-        100,
-      )
+    const blockSources = await this.pb.collection("evm_block_sources")
+      .getFullList<EVMBlockSourceParsed & Record>(200);
+    for (
+      const dataSource of blockSources
     ) {
       this.blockSources.push(dataSource);
     }

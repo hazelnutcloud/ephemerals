@@ -10,6 +10,10 @@ export class EVMFeeder {
 
   async run() {
     await this.dataSourceManager.init();
-    this.dataSourceManager.getDataSources();
+    const dependencies = await this.dataSourceManager.getDependencies();
+
+    const chains = Object.values(dependencies).flatMap((
+      dep,
+    ) => [...dep.keys()]);
   }
 }

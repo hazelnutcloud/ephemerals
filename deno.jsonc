@@ -4,7 +4,6 @@
   },
   "imports": {
     "@stack": "./packages/stack/mod.ts",
-    "@shared-deps": "./packages/shared/deps.ts",
-    "@shared": "./packages/shared/mod.ts"
+    "@shared-deps": "./packages/shared/deps.ts"
   }
 }

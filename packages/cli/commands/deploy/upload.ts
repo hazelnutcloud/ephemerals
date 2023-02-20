@@ -9,7 +9,6 @@ import {
   EVMEventLogSource,
   fetchAbi,
 } from "@stack";
-import { collectionIterator } from "@shared";
 import { ethers } from "@shared-deps";
 
 interface Stage {
@@ -70,10 +69,12 @@ export const upload = async (
   }
 
   // delete old ephemerals for this stage
-  for await (
-    const ephemeralRecord of collectionIterator(pb, "ephemerals", 10, {
-      filter: `stage="${stageRecord!.id}"`,
-    })
+  const oldEphemerals = await pb.collection("ephemerals").getFullList(200, {
+    filter: `stage="${stageRecord!.id}"`,
+  });
+
+  for (
+    const ephemeralRecord of oldEphemerals
   ) {
     spinner.text = `Deleting old ephemerals...`;
     await pb.collection("ephemerals").delete(ephemeralRecord.id);
